@@ -6,10 +6,11 @@ admin
 customer
 1. register
 2. login
-3. view menu [ok]
-4. add pesanan
-5. get pesanan
-6. delete pesanan
+3. view menu (get list menu) [ok]
+4. get menu by id
+5. add pesanan
+6. get pesanan
+7. delete pesanan
 
 admin
 1. delete pesanan

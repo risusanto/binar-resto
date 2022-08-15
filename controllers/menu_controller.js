@@ -4,6 +4,9 @@
 const express = require('express')
 const _ = require('lodash')
 
+// import models
+const {Menu} = require("../models")
+
 // init router
 const router = express.Router()
 
@@ -11,41 +14,43 @@ const router = express.Router()
 let menu_data = require('../data/menu')
 
 router.get('/', function (req, res){
-    let menu = menu_data
-
-    let category = req.query['category']
-    if (category !== undefined && category !== 'all') {
-        menu = _.filter(menu_data, (m) => {
-           return m.category === category
+    Menu.findAll().then(menus => {
+        let res_data = {
+            "status": "ok",
+            "message": "success",
+            "data": menus
+        }
+        res_data.data =
+        res.json(res_data)
+    }).catch(err => {
+        res.json({
+            msg: "something went wrong"
         })
-    }
-
-    let res_data = {
-        "status": "ok",
-        "message": "success",
-        "data": menu
-    }
-    res.json(res_data)
+    })
 })
 
 router.get('/detail/:id', function (req, res) {
     let id = parseInt(req.params['id'])
-    let res_data = {
-        "status": "ok",
-        "message": "success",
-        "data": null
-    }
-    let menu = _.find(menu_data, (m) => {
-       return m.id === id
+    Menu.findOne({
+        where: {id: id}
+    }).then(menu => {
+        let res_data = {
+            "status": "ok",
+            "message": "success",
+            "data": menu
+        }
+        if (menu === null) {
+            res.status(400)
+            res_data.status = 'failed';
+            res_data.message = "menu not found"
+        }
+        res_data.data =
+            res.json(res_data)
+    }).catch(err => {
+        res.json({
+            msg: "something went wrong"
+        })
     })
-    if (menu === undefined) {
-        res_data.status = "failed"
-        res_data.message = "menu not found"
-        return res.json(res_data)
-    }
-
-    res_data.data = menu
-    res.json(res_data)
 })
 
 module.exports = router
