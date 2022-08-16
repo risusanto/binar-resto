@@ -7,6 +7,7 @@ const morgan = require('morgan')
 // import controllers
 const menu_router = require('./controllers/menu_controller')
 const admin_router = require('./controllers/admin_controller')
+const auth_router = require('./controllers/auth_controller')
 
 // init express App
 const app = express()
@@ -30,6 +31,7 @@ app.get('/', function (req, res){
 // init routes
 app.use('/menu', menu_router)
 app.use('/admin', admin_router)
+app.use(auth_router)
 
 // contoh init handler yang menggunakan class
 app.listen(port, host, () => {
