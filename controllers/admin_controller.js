@@ -64,4 +64,9 @@ router.delete('/menu/delete/:id', function (req, res) {
     res.json(res_data)
 })
 
+router.patch('/order/change-status', async (req, res) => {
+    // TODO: update order status (req.body.status, req.body.order_id
+    // TODO: canceled, jika dicancel maka undo change ke stock menu
+})
+
 module.exports = router

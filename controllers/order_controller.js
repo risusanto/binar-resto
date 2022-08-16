@@ -49,4 +49,10 @@ router.post('/add', async (req, res) => {
     res.json(res_data)
 })
 
+router.post('/submit', async (req, res) => {
+    // TODO: update order status to SUBMITTED
+    // TODO: kurangin stock menu/update stock menu
+    res.json({})
+})
+
 module.exports = router
