@@ -7,6 +7,11 @@ description: admin controller/router
 const express = require('express')
 const _ = require('lodash')
 
+// import use case
+const order_uc = require('../usecase/order')
+
+const order_constants = require('../internal/constants/order')
+
 // init router
 const router = express.Router()
 
@@ -67,6 +72,38 @@ router.delete('/menu/delete/:id', function (req, res) {
 router.patch('/order/change-status', async (req, res) => {
     // TODO: update order status (req.body.status, req.body.order_id
     // TODO: canceled, jika dicancel maka undo change ke stock menu
+})
+
+router.get('/order', async (req, res) => {
+    let res_data = {
+        status: 'ok',
+        message: 'success'
+    }
+    if (req.query['status'] === 'completed') {
+        res_data.data = await order_uc.listCompletedOrder()
+    } else {
+        res_data.data = await order_uc.listOrderExcludePending()
+    }
+
+    res.json(res_data)
+})
+
+router.patch('/order/update', async (req, res) => {
+    let res_data = {
+        status: 'ok',
+        message: 'success',
+        data: null
+    }
+
+    let order_id = req.body.id
+    let status = order_constants[req.body.status]
+    if (status === undefined) {
+        res_data.status = 'failed'
+        res_data.message = 'invalid status'
+        return res.status(400).json(res_data)
+    }
+    await order_uc.changeOrderStatus(order_id, status)
+    res.json(res_data)
 })
 
 module.exports = router

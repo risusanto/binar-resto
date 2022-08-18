@@ -5,6 +5,8 @@ const express = require('express')
 const order_uc = require('../usecase/order')
 const {or} = require("sequelize");
 
+const order_const = require('../internal/constants/order')
+
 // init router
 const router = express.Router()
 
@@ -49,10 +51,28 @@ router.post('/add', async (req, res) => {
     res.json(res_data)
 })
 
-router.post('/submit', async (req, res) => {
-    // TODO: update order status to SUBMITTED
-    // TODO: kurangin stock menu/update stock menu
-    res.json({})
+router.patch('/submit', async (req, res) => {
+    // TODO: get id by header
+    let id = 1
+
+    let res_data = {
+        status: 'failed',
+        message: '',
+        data: null
+    }
+
+    let order_data = await order_uc.getPendingOrderByUserID(id)
+    if (order_data === null) {
+        res_data.message = 'order is empty'
+        return res.status(400).json(res_data)
+    }
+
+    // update status
+    await order_uc.changeOrderStatus(order_data.id, order_const.ORDER_SUBMITTED)
+
+    res_data.status = 'ok';
+    res_data.message = 'success'
+    res.json(res_data)
 })
 
 module.exports = router

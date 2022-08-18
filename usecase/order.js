@@ -1,6 +1,7 @@
 const order_constants = require('../internal/constants/order')
 const menu_uc = require('../usecase/menu')
 const {Order,OrderDetail} = require('../models')
+const Op = require("sequelize").Op;
 
 let  getPendingOrderByUserID = async (user_id) => {
     let order = null
@@ -78,9 +79,66 @@ let addOrderDetails =  async (order_id, items) => {
     }
 }
 
+let changeOrderStatus = async (order_id, status) => {
+    await Order.update({
+        status: status
+    }, {
+        where: {id: order_id}
+    })
+}
+
+let listOrderExcludePending = async () => {
+    let orders = await Order.findAll({
+        where: {
+            [Op.and]: [
+                {
+                    status: {
+                        [Op.ne]: order_constants.ORDER_PENDING
+                    }
+                },
+                {
+                    status: {
+                        [Op.ne]: order_constants.ORDER_COMPLETED
+                    }
+                }
+            ]
+        }
+    })
+
+    if (orders === null) {
+        return []
+    }
+
+    return orders
+}
+
+let listCompletedOrder = async () => {
+    let orders = await Order.findAll({
+        where: {
+            [Op.or]: [
+                {
+                    status: order_constants.ORDER_COMPLETED
+                },
+                {
+                    status: order_constants.ORDER_CANCELED
+                },
+            ]
+        }
+    })
+
+    if (orders === null) {
+        return []
+    }
+
+    return orders
+}
+
 module.exports = {
     getPendingOrderByUserID: getPendingOrderByUserID,
     getDetailOrder: getDetailOrder,
     createOrder: createOrder,
-    addOrderDetails: addOrderDetails
+    addOrderDetails: addOrderDetails,
+    changeOrderStatus: changeOrderStatus,
+    listOrderExcludePending: listOrderExcludePending,
+    listCompletedOrder: listCompletedOrder
 }
