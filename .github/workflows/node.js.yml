@@ -27,3 +27,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v1.6
