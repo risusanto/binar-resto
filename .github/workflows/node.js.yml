@@ -27,7 +27,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install
-    - name: GitHub Actions Workflow Linter
-      # You may pin to the exact commit or the version.
-      # uses: cschleiden/actions-linter@caffd707beda4fc6083926a3dff48444bc7c24aa
-      uses: cschleiden/actions-linter@v1
+    - name: Lint
+      uses: github/super-linter@v4.9.5
